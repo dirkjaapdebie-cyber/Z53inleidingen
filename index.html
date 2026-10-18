@@ -243,17 +243,32 @@
     border: 2px solid #475569;
     border-radius: 12px;
     background: #020617;
-    height: 480px;
+    height: 520px;
     overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
+
+  /* Digibord Vergroot / Fullscreen modus */
+  .whiteboard-container.fullscreen {
+    position: fixed !important;
+    inset: 16px !important;
+    height: calc(100vh - 32px) !important;
+    z-index: 9999 !important;
+    border-color: #818cf8 !important;
+    box-shadow: 0 0 0 100vmax rgba(2, 6, 23, 0.85), 0 25px 60px rgba(0,0,0,0.85) !important;
+    border-radius: 16px;
+  }
+
   canvas.wb-canvas {
     position: absolute; inset: 0; width: 100%; height: 100%;
     cursor: crosshair; touch-action: none;
   }
   .wb-toolbar {
     position: absolute; top: 10px; left: 10px; z-index: 10;
-    background: rgba(30, 41, 59, 0.85);
-    padding: 8px; border-radius: 8px; display: flex; gap: 8px; align-items: center;
+    background: rgba(30, 41, 59, 0.9);
+    backdrop-filter: blur(8px);
+    padding: 8px 12px; border-radius: 8px; display: flex; gap: 8px; align-items: center;
+    border: 1px solid var(--border);
   }
   .sticky-note {
     position: absolute;
@@ -843,10 +858,12 @@ function renderPhaseContent(lessonId, phaseId, phase) {
       target.innerHTML = `
         <div class="whiteboard-container" id="wb_wrap_${phaseId}">
           <div class="wb-toolbar">
-            <input type="color" id="wbColor_${phaseId}" value="#ffffff">
+            <input type="color" id="wbColor_${phaseId}" value="#ffffff" title="Kies penkleur">
             <button class="btn-secondary" style="padding:4px 8px;" onclick="window.clearCanvas('${lessonId}', '${phaseId}')">Wis Tekening</button>
-            <input type="text" id="wbNoteInput_${phaseId}" placeholder="Typ briefje..." style="width:130px; padding:4px 8px;">
+            <input type="text" id="wbNoteInput_${phaseId}" placeholder="Typ briefje..." style="width:120px; padding:4px 8px;">
             <button style="padding:4px 8px;" onclick="window.addStickyNote('${lessonId}', '${phaseId}')">+ Briefje</button>
+            <!-- Vergroot / Fullscreen knop -->
+            <button class="btn-secondary" style="padding:4px 10px; font-weight:700;" id="wbFsBtn_${phaseId}" onclick="window.toggleWhiteboardFullscreen('${phaseId}')" title="Vergroot het digibord naar volledig scherm">⛶ Vergroten</button>
           </div>
           <canvas class="wb-canvas" id="wbCanvas_${phaseId}"></canvas>
           <div id="stickies_${phaseId}"></div>
@@ -928,18 +945,85 @@ window.submitQuizAnswer = (lessonId, phaseId, given, correct) => {
   }
 };
 
-// Digibord
+// =====================================================
+// DIGIBORD MET VERGROOTFUNCTIE & RESIZEOBSERVER
+// =====================================================
+
+// Fullscreen toggle functie voor het digibord
+window.toggleWhiteboardFullscreen = (phaseId) => {
+  const wrap = $(`#wb_wrap_${phaseId}`);
+  const btn = $(`#wbFsBtn_${phaseId}`);
+  if (!wrap) return;
+
+  wrap.classList.toggle('fullscreen');
+  const isFs = wrap.classList.contains('fullscreen');
+  if (btn) btn.innerHTML = isFs ? '🗗 Verkleinen' : '⛶ Vergroten';
+};
+
+// Escape-toets sluit fullscreen
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.whiteboard-container.fullscreen').forEach(wrap => {
+      wrap.classList.remove('fullscreen');
+      const phaseId = wrap.id.replace('wb_wrap_', '');
+      const btn = $(`#wbFsBtn_${phaseId}`);
+      if (btn) btn.innerHTML = '⛶ Vergroten';
+    });
+  }
+});
+
 function setupWhiteboard(lessonId, phaseId) {
   const canvas = $(`#wbCanvas_${phaseId}`);
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   const wrap = $(`#wb_wrap_${phaseId}`);
   
-  canvas.width = wrap.clientWidth;
-  canvas.height = wrap.clientHeight;
-
+  let currentStrokes = {};
+  let currentStickies = {};
   let drawing = false;
   let lastX = 0, lastY = 0;
+
+  // Herteken functie bij formaatwijzigingen
+  function redrawCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    Object.values(currentStrokes).forEach(s => {
+      ctx.beginPath();
+      ctx.strokeStyle = s.color || '#fff';
+      ctx.lineWidth = wrap.classList.contains('fullscreen') ? 4 : 3;
+      ctx.lineCap = 'round';
+      ctx.moveTo(s.x0 * canvas.width, s.y0 * canvas.height);
+      ctx.lineTo(s.x1 * canvas.width, s.y1 * canvas.height);
+      ctx.stroke();
+    });
+  }
+
+  function redrawStickies() {
+    const div = $(`#stickies_${phaseId}`);
+    if (!div) return;
+    div.innerHTML = '';
+    Object.entries(currentStickies).forEach(([sId, note]) => {
+      const el = document.createElement('div');
+      el.className = 'sticky-note';
+      el.style.left = (note.x * wrap.clientWidth) + 'px';
+      el.style.top = (note.y * wrap.clientHeight) + 'px';
+      el.style.background = note.color || '#fef08a';
+      el.innerHTML = `<div>${escapeHtml(note.text)}</div><div class="sticky-author">${escapeHtml(note.author)}</div>`;
+      
+      makeDraggable(el, sId, lessonId, phaseId, wrap);
+      div.appendChild(el);
+    });
+  }
+
+  // Luister naar formaatwijzigingen (vergroten/verkleinen) van het digibord
+  const ro = new ResizeObserver(() => {
+    if (canvas.width !== wrap.clientWidth || canvas.height !== wrap.clientHeight) {
+      canvas.width = wrap.clientWidth;
+      canvas.height = wrap.clientHeight;
+      redrawCanvas();
+      redrawStickies();
+    }
+  });
+  ro.observe(wrap);
 
   canvas.addEventListener('pointerdown', e => {
     drawing = true;
@@ -972,35 +1056,13 @@ function setupWhiteboard(lessonId, phaseId) {
   canvas.addEventListener('pointercancel', stopDrawing);
 
   onValue(ref(db, `lesson_whiteboard/${lessonId}/${phaseId}/strokes`), snap => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const strokes = snap.val() || {};
-    Object.values(strokes).forEach(s => {
-      ctx.beginPath();
-      ctx.strokeStyle = s.color || '#fff';
-      ctx.lineWidth = 3;
-      ctx.lineCap = 'round';
-      ctx.moveTo(s.x0 * canvas.width, s.y0 * canvas.height);
-      ctx.lineTo(s.x1 * canvas.width, s.y1 * canvas.height);
-      ctx.stroke();
-    });
+    currentStrokes = snap.val() || {};
+    redrawCanvas();
   });
 
   onValue(ref(db, `lesson_whiteboard/${lessonId}/${phaseId}/stickies`), snap => {
-    const list = snap.val() || {};
-    const div = $(`#stickies_${phaseId}`);
-    if (!div) return;
-    div.innerHTML = '';
-    Object.entries(list).forEach(([sId, note]) => {
-      const el = document.createElement('div');
-      el.className = 'sticky-note';
-      el.style.left = (note.x * wrap.clientWidth) + 'px';
-      el.style.top = (note.y * wrap.clientHeight) + 'px';
-      el.style.background = note.color || '#fef08a';
-      el.innerHTML = `<div>${escapeHtml(note.text)}</div><div class="sticky-author">${escapeHtml(note.author)}</div>`;
-      
-      makeDraggable(el, sId, lessonId, phaseId, wrap);
-      div.appendChild(el);
-    });
+    currentStickies = snap.val() || {};
+    redrawStickies();
   });
 }
 
@@ -1019,7 +1081,9 @@ window.addStickyNote = (lessonId, phaseId) => {
 };
 
 window.clearCanvas = (lessonId, phaseId) => {
-  remove(ref(db, `lesson_whiteboard/${lessonId}/${phaseId}/strokes`));
+  if (confirm("Weet je zeker dat je alle tekeningen wilt wissen?")) {
+    remove(ref(db, `lesson_whiteboard/${lessonId}/${phaseId}/strokes`));
+  }
 };
 
 function makeDraggable(el, noteId, lessonId, phaseId, container) {

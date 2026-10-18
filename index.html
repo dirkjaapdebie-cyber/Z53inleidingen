@@ -305,7 +305,7 @@
 <!-- Login & Rolkeuze -->
 <div id="loginScreen">
   <div class="login-card">
-    <h1>Bijbelstudie & Leskamer</h1>
+    <h1>Bijbelstudie Z53</h1>
     <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 14px;">Doe mee als deelnemer of log in als inleider</p>
     
     <div style="display:flex; gap:10px; margin-bottom:14px;">
@@ -315,7 +315,7 @@
 
     <div id="nameInputWrapper">
       <input type="text" id="userNameInput" placeholder="Voer je voornaam in..." style="width:100%; margin-bottom:12px;">
-      <button id="btnStart" style="width:100%;">Deelnemen aan de les</button>
+      <button id="btnStart" style="width:100%;">Deelnemen aan de inleiding</button>
     </div>
 
     <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:12px; font-size:12px; color:var(--text-muted);">
@@ -328,7 +328,7 @@
 <!-- Hoofd-header -->
 <header>
   <div class="logo-title">
-    <span id="displayLessonName">📖 Les: Even geduld...</span>
+    <span id="displayLessonName">📖 inleiding: Even geduld...</span>
     <span id="headerLiveBadge" class="status-badge draft hidden">Concept</span>
   </div>
   <div style="display:flex; align-items:center; gap:14px;">
@@ -339,22 +339,22 @@
 
 <main id="mainApp" class="hidden">
 
-  <!-- ================= INLEIDER: LESSELECTIE & PUSH PANEEL ================= -->
+  <!-- ================= INLEIDER: Selecteer uit inleidingen & PUSH PANEEL ================= -->
   <div id="inleiderPushBox" class="push-control-box hidden">
     <div class="push-row">
       <div style="flex:1; min-width:260px;">
-        <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:4px;">Kies ontworpen les om te bewerken:</label>
+        <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:4px;">Kies ontworpen inleiding om te bewerken:</label>
         <div style="display:flex; gap:8px;">
           <select id="lessonSelector" style="flex:1; font-weight:600;"></select>
-          <button id="btnNewLessonModal" class="btn-secondary" title="Maak een nieuwe les aan">+ Nieuwe Les</button>
-          <button id="btnDeleteLesson" class="btn-danger" title="Verwijder geselecteerde les">🗑️</button>
+          <button id="btnNewLessonModal" class="btn-secondary" title="Maak een nieuwe inleiding aan">+ Nieuwe inleiding</button>
+          <button id="btnDeleteLesson" class="btn-danger" title="Verwijder geselecteerde inleiding">🗑️</button>
         </div>
       </div>
 
       <div style="display:flex; align-items:center; gap:12px;">
         <div id="lessonLiveStatus" class="status-badge draft">💤 Niet live</div>
         <button id="btnPushToParticipants" class="btn-push">
-          🚀 PUSH DEZE LES NAAR DEELNEMERS
+          🚀 PUSH DEZE INLEIDING NAAR DEELNEMERS
         </button>
       </div>
     </div>
@@ -362,7 +362,7 @@
 
   <!-- Inleider: Fase toevoegen -->
   <div id="builderSection" class="builder-panel hidden">
-    <h2>🛠️ Lesonderdeel toevoegen aan deze les:</h2>
+    <h2>🛠️ Onderdeel toevoegen aan deze inleiding:</h2>
     <div class="form-row">
       <select id="phaseTypeSelect">
         <option value="text">📝 Tekstblok met opmaak</option>
@@ -383,7 +383,7 @@
   <div id="waitingScreen" class="hidden" style="text-align:center; padding:70px 20px; color:#94a3b8;">
     <div style="font-size:54px; margin-bottom:14px;">⏳</div>
     <h2 style="color:#f8fafc; margin-bottom:8px;">Wachten op de inleider...</h2>
-    <p>De inleider heeft nog geen les live gezet. Zodra de les wordt gestart verschijnt hij direct hier!</p>
+    <p>De inleider heeft nog geen inleiding live gezet. Zodra de inleiding wordt gestart verschijnt hij direct hier!</p>
   </div>
 
   <!-- Realtime weergave van de fases -->
@@ -395,7 +395,7 @@
 <div id="inleiderToolbar" class="inleider-bar hidden">
   <span style="font-size:13px; color:#cbd5e1;">Inleidersbediening:</span>
   <div style="display:flex; gap:10px;">
-    <button id="btnResetParticipants" class="btn-danger" title="Verwijdert uitsluitend de deelnemerslijst en antwoorden, alle ontworpen lessen blijven 100% bewaard">
+    <button id="btnResetParticipants" class="btn-danger" title="Verwijdert uitsluitend de deelnemerslijst en antwoorden, alle ontworpen inleidingen blijven 100% bewaard">
       ⚠️ Deelnemers Resetten
     </button>
   </div>
@@ -431,8 +431,8 @@ let currentUser = {
 };
 
 let allLessons = {};
-let selectedLessonId = null;   // De les die de inleider bekijkt/bewerkt
-let activePushedLessonId = null; // De les die live staat voor deelnemers
+let selectedLessonId = null;   // De inleiding die de inleider bekijkt/bewerkt
+let activePushedLessonId = null; // De inleiding die live staat voor deelnemers
 let cachedSortedPhases = [];
 
 const $ = s => document.querySelector(s);
@@ -488,9 +488,9 @@ onValue(ref(db, 'session/participants'), snap => {
   $('#onlineList').innerHTML = list.map(u => `<span style="background:#334155; padding:2px 8px; border-radius:4px; font-size:11px;">${escapeHtml(u.name)}</span>`).join('');
 });
 
-// Deelnemers Resetknop: wist deelnemers en interacties, lessen blijven intact
+// Deelnemers Resetknop: wist deelnemers en interacties, inleidingen blijven intact
 $('#btnResetParticipants').onclick = async () => {
-  if (confirm("Weet je zeker dat je alle deelnemers, quizscores en chatreacties wilt wissen?\n\nJe ontworpen lessen en fases blijven 100% onaangeroerd!")) {
+  if (confirm("Weet je zeker dat je alle deelnemers, quizscores en chatreacties wilt wissen?\n\nJe ontworpen inleidingen en fases blijven 100% onaangeroerd!")) {
     await remove(ref(db, 'session/participants'));
     await remove(ref(db, 'lesson_interactions'));
     await remove(ref(db, 'lesson_whiteboard'));
@@ -499,12 +499,12 @@ $('#btnResetParticipants').onclick = async () => {
 };
 
 // =====================================================
-// LESBEHEER & PUSH FUNCTIE
+// BEHEER INLEIDINGEN & PUSH FUNCTIE
 // =====================================================
 
-// Nieuwe les aanmaken
+// Nieuwe inleiding aanmaken
 $('#btnNewLessonModal').onclick = async () => {
-  const title = prompt("Voer de naam in van de nieuwe les:", "..naam nieuwe inleiding");
+  const title = prompt("Voer de naam in van de nieuwe inleiding:", "..naam nieuwe inleiding");
   if (!title || !title.trim()) return;
 
   const newRef = push(ref(db, 'lessons'));
@@ -516,10 +516,10 @@ $('#btnNewLessonModal').onclick = async () => {
   showToast(`Les "${title}" aangemaakt ✓`);
 };
 
-// Les verwijderen
+// inleiding verwijderen
 $('#btnDeleteLesson').onclick = async () => {
   if (!selectedLessonId) return;
-  const currentTitle = allLessons[selectedLessonId]?.title || 'deze les';
+  const currentTitle = allLessons[selectedLessonId]?.title || 'deze inleiding';
   if (!confirm(`Weet je zeker dat je "${currentTitle}" en alle bijbehorende fases wilt verwijderen?`)) return;
 
   if (activePushedLessonId === selectedLessonId) {
@@ -527,21 +527,21 @@ $('#btnDeleteLesson').onclick = async () => {
   }
   await remove(ref(db, `lessons/${selectedLessonId}`));
   selectedLessonId = null;
-  showToast("Les verwijderd ✓");
+  showToast("inleiding verwijderd ✓");
 };
 
-// Wisselen van les in het inleiders-uitklapmenu
+// Wisselen van inleiding in het inleiders-uitklapmenu
 $('#lessonSelector').onchange = (e) => {
   selectedLessonId = e.target.value;
   updateInleiderView();
 };
 
-// DE PUSH KNOP: Pusht uitsluitend de gekozen les naar alle deelnemers!
+// DE PUSH KNOP: Pusht uitsluitend de gekozen inleiding naar alle deelnemers!
 $('#btnPushToParticipants').onclick = async () => {
-  if (!selectedLessonId) return alert("Selecteer of maak eerst een les aan!");
+  if (!selectedLessonId) return alert("Selecteer of maak eerst een inleiding aan!");
   
   await set(ref(db, 'session/activeLessonId'), selectedLessonId);
-  const title = allLessons[selectedLessonId]?.title || 'Les';
+  const title = allLessons[selectedLessonId]?.title || 'inleiding';
   showToast(`🚀 "${title}" is nu live gepusht naar alle deelnemers!`);
   updateInleiderView();
 };
@@ -593,7 +593,7 @@ phaseSelect.onchange = renderSpecificInputs;
 renderSpecificInputs();
 
 $('#btnAddPhase').onclick = async () => {
-  if (!selectedLessonId) return alert("Selecteer of maak eerst een les aan!");
+  if (!selectedLessonId) return alert("Selecteer of maak eerst een inleiding aan!");
 
   const type = phaseSelect.value;
   const title = $('#phaseTitleInput').value.trim() || 'Onderdeel';
@@ -634,7 +634,7 @@ $('#btnAddPhase').onclick = async () => {
   showToast("Onderdeel toegevoegd ✓");
 };
 
-// Verschuiven van fases in de huidige les
+// Verschuiven van fases in de huidige inleiding
 window.movePhase = async (phaseId, direction) => {
   const currentLesson = getCurrentLessonId();
   if (!currentLesson) return;
@@ -658,7 +658,7 @@ window.movePhase = async (phaseId, direction) => {
 
 window.removePhase = (phaseId) => {
   const currentLesson = getCurrentLessonId();
-  if (confirm("Dit lesonderdeel definitief verwijderen?")) {
+  if (confirm("Dit onderdeel definitief verwijderen?")) {
     remove(ref(db, `lessons/${currentLesson}/phases/${phaseId}`));
   }
 };

@@ -17,6 +17,8 @@
     --accent-hover: #4f46e5;
     --text: #f8fafc;
     --text-muted: #94a3b8;
+    --green: #10b981;
+    --green-hover: #059669;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -57,14 +59,17 @@
     transition: all 0.2s;
   }
   button:hover { background: var(--accent-hover); }
-  .btn-secondary {
-    background: #334155;
-  }
+  .btn-secondary { background: #334155; }
   .btn-secondary:hover { background: #475569; }
-  .btn-danger {
-    background: #ef4444;
-  }
+  .btn-danger { background: #ef4444; }
   .btn-danger:hover { background: #dc2626; }
+  .btn-push {
+    background: linear-gradient(135deg, #10b981, #059669);
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .btn-push:hover { background: linear-gradient(135deg, #059669, #047857); transform: scale(1.02); }
 
   /* Login Card */
   #loginScreen {
@@ -96,7 +101,7 @@
     align-items: center;
     position: sticky; top: 0; z-index: 100;
   }
-  .logo-title { font-weight: 700; font-size: 18px; color: #818cf8; }
+  .logo-title { font-weight: 700; font-size: 18px; color: #818cf8; display: flex; align-items: center; gap: 8px; }
 
   /* Main Container */
   main {
@@ -107,10 +112,43 @@
     padding: 24px 16px 80px;
   }
 
-  /* Leader / Editor Panel */
+  /* PUSH & Management Box */
+  .push-control-box {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95));
+    border: 2px solid var(--accent);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .push-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .status-badge {
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .status-badge.live {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    border: 1px solid #10b981;
+  }
+  .status-badge.draft {
+    background: rgba(148, 163, 184, 0.2);
+    color: #94a3b8;
+    border: 1px solid #64748b;
+  }
+
+  /* Builder Panel */
   .builder-panel {
     background: #1e293b;
-    border: 1px solid var(--accent);
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 24px;
@@ -126,6 +164,11 @@
     border-radius: 14px;
     padding: 24px;
     margin-bottom: 24px;
+    animation: fadeUp 0.3s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
   }
   .phase-header {
     display: flex;
@@ -134,8 +177,33 @@
     border-bottom: 1px solid var(--border);
     padding-bottom: 12px;
     margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 8px;
   }
-  .phase-title { font-size: 20px; font-weight: 700; color: #e2e8f0; }
+  .phase-title { font-size: 18px; font-weight: 700; color: #e2e8f0; }
+
+  .phase-badge {
+    background: var(--accent);
+    color: white;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .btn-reorder {
+    padding: 5px 10px;
+    font-size: 12px;
+    background: #334155;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .btn-reorder:hover:not(:disabled) { background: #475569; color: #fff; }
+  .btn-reorder:disabled { opacity: 0.3; cursor: not-allowed; }
 
   /* Text phase styling */
   .rich-content { line-height: 1.7; font-size: 16px; }
@@ -178,7 +246,7 @@
     height: 480px;
     overflow: hidden;
   }
-  canvas#wbCanvas {
+  canvas.wb-canvas {
     position: absolute; inset: 0; width: 100%; height: 100%;
     cursor: crosshair; touch-action: none;
   }
@@ -199,13 +267,22 @@
   .sticky-note:active { cursor: grabbing; z-index: 50; }
   .sticky-author { font-size: 11px; font-weight: bold; text-align: right; margin-top: 6px; }
 
-  /* Bottom Sticky Bar for Inleider */
+  /* Bottom Bar */
   .inleider-bar {
     position: fixed; bottom: 0; left: 0; right: 0;
     background: #1e293b; border-top: 1px solid var(--border);
     padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;
     z-index: 200;
   }
+
+  /* Toast Notificatie */
+  #toast {
+    position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+    background: #10b981; color: white; padding: 12px 24px; border-radius: 999px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4); z-index: 500; opacity: 0; pointer-events: none;
+    transition: opacity 0.3s; font-weight: 600;
+  }
+  #toast.show { opacity: 1; }
 </style>
 </head>
 <body>
@@ -214,7 +291,7 @@
 <div id="loginScreen">
   <div class="login-card">
     <h1>Bijbelstudie & Leskamer</h1>
-    <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 14px;">Log in om mee te doen of de les te leiden</p>
+    <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 14px;">Doe mee als deelnemer of log in als inleider</p>
     
     <div style="display:flex; gap:10px; margin-bottom:14px;">
       <button id="btnRoleDeelnemer" class="btn" style="flex:1;">Deelnemer</button>
@@ -227,15 +304,18 @@
     </div>
 
     <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:12px; font-size:12px; color:var(--text-muted);">
-      Actieve deelnemers online: <span id="onlineCounter">0</span>
+      Aanwezige deelnemers online (<span id="onlineCounter">0</span>):
       <div id="onlineList" style="margin-top:6px; display:flex; flex-wrap:wrap; gap:4px; justify-content:center;"></div>
     </div>
   </div>
 </div>
 
-<!-- Hoofd-applicatie -->
+<!-- Hoofd-header -->
 <header>
-  <div class="logo-title" id="displayLessonName">📖 Les: Geen les geselecteerd</div>
+  <div class="logo-title">
+    <span id="displayLessonName">📖 Les: Even geduld...</span>
+    <span id="headerLiveBadge" class="status-badge draft hidden">Concept</span>
+  </div>
   <div style="display:flex; align-items:center; gap:14px;">
     <span id="roleIndicator" style="font-size:12px; color:var(--text-muted);"></span>
     <span id="badgeName" style="background:#334155; padding:4px 10px; border-radius:999px; font-size:13px;"></span>
@@ -244,17 +324,30 @@
 
 <main id="mainApp" class="hidden">
 
-  <!-- Bouw-paneel: Alleen zichtbaar voor de inleider -->
-  <div id="builderSection" class="builder-panel hidden">
-    <h2>🛠️ Lesgenerator (Inleiderspaneel)</h2>
-    <div class="form-row">
-      <input type="text" id="lessonTitleInput" placeholder="Titel van deze les (bijv: Hebreeën 11 - Het ware geloof)">
-      <button id="btnSaveLessonTitle">Naam opslaan</button>
+  <!-- ================= INLEIDER: LESSELECTIE & PUSH PANEEL ================= -->
+  <div id="inleiderPushBox" class="push-control-box hidden">
+    <div class="push-row">
+      <div style="flex:1; min-width:260px;">
+        <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:4px;">Kies ontworpen les om te bewerken:</label>
+        <div style="display:flex; gap:8px;">
+          <select id="lessonSelector" style="flex:1; font-weight:600;"></select>
+          <button id="btnNewLessonModal" class="btn-secondary" title="Maak een nieuwe les aan">+ Nieuwe Les</button>
+          <button id="btnDeleteLesson" class="btn-danger" title="Verwijder geselecteerde les">🗑️</button>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div id="lessonLiveStatus" class="status-badge draft">💤 Niet live</div>
+        <button id="btnPushToParticipants" class="btn-push">
+          🚀 PUSH DEZE LES NAAR DEELNEMERS
+        </button>
+      </div>
     </div>
+  </div>
 
-    <hr style="border:none; border-top:1px solid var(--border); margin:16px 0;">
-
-    <h3 style="font-size:14px; margin-bottom:8px; color:#a5b4fc;">Nieuwe Fase toevoegen:</h3>
+  <!-- Inleider: Fase toevoegen -->
+  <div id="builderSection" class="builder-panel hidden">
+    <h2>🛠️ Lesonderdeel toevoegen aan deze les:</h2>
     <div class="form-row">
       <select id="phaseTypeSelect">
         <option value="text">📝 Tekstblok met opmaak</option>
@@ -265,10 +358,17 @@
         <option value="digibord">🖊️ Digibord & Briefjes</option>
         <option value="image">🖼️ Afbeelding toevoegen</option>
       </select>
-      <input type="text" id="phaseTitleInput" placeholder="Titel of kop van deze fase...">
-      <button id="btnAddPhase">+ Fase Aanmaken</button>
+      <input type="text" id="phaseTitleInput" placeholder="Titel of kop van dit onderdeel...">
+      <button id="btnAddPhase">+ Onderdeel Toevoegen</button>
     </div>
     <div id="phaseSpecificInputs"></div>
+  </div>
+
+  <!-- Wachtscherm voor deelnemers als er nog niets live staat -->
+  <div id="waitingScreen" class="hidden" style="text-align:center; padding:70px 20px; color:#94a3b8;">
+    <div style="font-size:54px; margin-bottom:14px;">⏳</div>
+    <h2 style="color:#f8fafc; margin-bottom:8px;">Wachten op de inleider...</h2>
+    <p>De inleider heeft nog geen les live gezet. Zodra de les wordt gestart verschijnt hij direct hier!</p>
   </div>
 
   <!-- Realtime weergave van de fases -->
@@ -276,15 +376,17 @@
 
 </main>
 
-<!-- Onderbalk voor inleider met specifieke Resetknop -->
+<!-- Onderbalk voor inleider met Deelnemers-Resetknop -->
 <div id="inleiderToolbar" class="inleider-bar hidden">
   <span style="font-size:13px; color:#cbd5e1;">Inleidersbediening:</span>
   <div style="display:flex; gap:10px;">
-    <button id="btnResetParticipants" class="btn-danger" title="Verwijdert uitsluitend de deelnemerslijst en antwoorden, de les blijft intact">
+    <button id="btnResetParticipants" class="btn-danger" title="Verwijdert uitsluitend de deelnemerslijst en antwoorden, alle ontworpen lessen blijven 100% bewaard">
       ⚠️ Deelnemers Resetten
     </button>
   </div>
 </div>
+
+<div id="toast"></div>
 
 <!-- Firebase Modular SDK -->
 <script type="module">
@@ -293,7 +395,6 @@ import {
   getDatabase, ref, set, push, onValue, update, remove, onDisconnect 
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-// Jouw databaseconfiguratie
 const firebaseConfig = {
   apiKey: "AIzaSyCcC2ZvkbWDuXLWSGmCpM2wfBnm65UYrbQ",
   authDomain: "z53bijbelstudie.firebaseapp.com",
@@ -311,12 +412,24 @@ const db = getDatabase(app);
 let currentUser = {
   id: 'u_' + Math.random().toString(36).substr(2, 9),
   name: '',
-  role: 'deelnemer' // 'deelnemer' of 'inleider'
+  role: 'deelnemer'
 };
+
+let allLessons = {};
+let selectedLessonId = null;   // De les die de inleider bekijkt/bewerkt
+let activePushedLessonId = null; // De les die live staat voor deelnemers
+let cachedSortedPhases = [];
 
 const $ = s => document.querySelector(s);
 
-// Inlog & Rol Logica
+function showToast(msg) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// Inlog & Rolselectie
 $('#btnRoleDeelnemer').onclick = () => {
   currentUser.role = 'deelnemer';
   $('#btnRoleDeelnemer').className = 'btn';
@@ -334,7 +447,6 @@ $('#btnStart').onclick = () => {
   if (!name) return alert('Vul je naam in!');
   currentUser.name = name;
 
-  // Registreer deelnemer in database
   const userRef = ref(db, `session/participants/${currentUser.id}`);
   set(userRef, { name: currentUser.name, role: currentUser.role });
   onDisconnect(userRef).remove();
@@ -345,14 +457,15 @@ $('#btnStart').onclick = () => {
   $('#roleIndicator').textContent = currentUser.role === 'inleider' ? '⭐ Inleider' : '👤 Deelnemer';
 
   if (currentUser.role === 'inleider') {
+    $('#inleiderPushBox').classList.remove('hidden');
     $('#builderSection').classList.remove('hidden');
     $('#inleiderToolbar').classList.remove('hidden');
   }
 
-  initRealtime();
+  initAppSync();
 };
 
-// Deelnemerslijst realtime bijhouden in login venster & header
+// Deelnemerslijst
 onValue(ref(db, 'session/participants'), snap => {
   const users = snap.val() || {};
   const list = Object.values(users);
@@ -360,23 +473,68 @@ onValue(ref(db, 'session/participants'), snap => {
   $('#onlineList').innerHTML = list.map(u => `<span style="background:#334155; padding:2px 8px; border-radius:4px; font-size:11px;">${escapeHtml(u.name)}</span>`).join('');
 });
 
-// Resetknop: Wist alleen de deelnemers en interacties, laat de les ongemoeid
+// Deelnemers Resetknop: wist deelnemers en interacties, lessen blijven intact
 $('#btnResetParticipants').onclick = async () => {
-  if (confirm("Weet je zeker dat je alle deelnemers, hun scores en chat-reacties wilt wissen? De les zelf blijft behouden.")) {
+  if (confirm("Weet je zeker dat je alle deelnemers, quizscores en chatreacties wilt wissen?\n\nJe ontworpen lessen en fases blijven 100% onaangeroerd!")) {
     await remove(ref(db, 'session/participants'));
-    await remove(ref(db, 'lesson/interactions'));
-    await remove(ref(db, 'lesson/whiteboard'));
-    alert("Deelnemers en interacties zijn gereset.");
+    await remove(ref(db, 'lesson_interactions'));
+    await remove(ref(db, 'lesson_whiteboard'));
+    showToast("Deelnemers en interacties zijn gereset ✓");
   }
 };
 
-// Lesnaam beheer
-$('#btnSaveLessonTitle').onclick = () => {
-  const title = $('#lessonTitleInput').value.trim();
-  if (title) set(ref(db, 'lesson/title'), title);
+// =====================================================
+// LESBEHEER & PUSH FUNCTIE
+// =====================================================
+
+// Nieuwe les aanmaken
+$('#btnNewLessonModal').onclick = async () => {
+  const title = prompt("Voer de naam in van de nieuwe les:", "Bijv: Hebreeën 11 - Geloofsgetuigen");
+  if (!title || !title.trim()) return;
+
+  const newRef = push(ref(db, 'lessons'));
+  await set(newRef, {
+    title: title.trim(),
+    created: Date.now()
+  });
+  selectedLessonId = newRef.key;
+  showToast(`Les "${title}" aangemaakt ✓`);
 };
 
-// Formulier dynamiek voor de verschillende fasen
+// Les verwijderen
+$('#btnDeleteLesson').onclick = async () => {
+  if (!selectedLessonId) return;
+  const currentTitle = allLessons[selectedLessonId]?.title || 'deze les';
+  if (!confirm(`Weet je zeker dat je "${currentTitle}" en alle bijbehorende fases wilt verwijderen?`)) return;
+
+  if (activePushedLessonId === selectedLessonId) {
+    await remove(ref(db, 'session/activeLessonId'));
+  }
+  await remove(ref(db, `lessons/${selectedLessonId}`));
+  selectedLessonId = null;
+  showToast("Les verwijderd ✓");
+};
+
+// Wisselen van les in het inleiders-uitklapmenu
+$('#lessonSelector').onchange = (e) => {
+  selectedLessonId = e.target.value;
+  updateInleiderView();
+};
+
+// DE PUSH KNOP: Pusht uitsluitend de gekozen les naar alle deelnemers!
+$('#btnPushToParticipants').onclick = async () => {
+  if (!selectedLessonId) return alert("Selecteer of maak eerst een les aan!");
+  
+  await set(ref(db, 'session/activeLessonId'), selectedLessonId);
+  const title = allLessons[selectedLessonId]?.title || 'Les';
+  showToast(`🚀 "${title}" is nu live gepusht naar alle deelnemers!`);
+  updateInleiderView();
+};
+
+// =====================================================
+// FASEN TOEVOEGEN & HERORDENEN
+// =====================================================
+
 const phaseSelect = $('#phaseTypeSelect');
 const specificDiv = $('#phaseSpecificInputs');
 
@@ -387,12 +545,12 @@ function renderSpecificInputs() {
     html = `
       <div style="margin-top:8px;">
         <label style="font-size:12px; color:var(--text-muted);">Tekst (gebruik <b>*dik*</b> en <i>_cursief_</i>):</label>
-        <textarea id="textPhaseInput" rows="4" style="width:100%; margin-top:4px;" placeholder="Voer hier de bijbeltekst of toelichting in..."></textarea>
+        <textarea id="textPhaseInput" rows="5" style="width:100%; margin-top:4px;" placeholder="Voer hier de bijbeltekst of toelichting in..."></textarea>
       </div>`;
   } else if (val === 'youtube') {
-    html = `<input type="text" id="ytPhaseInput" placeholder="YouTube URL (bijv. https://www.youtube.com/watch?v=...) style="width:100%; margin-top:8px;">`;
+    html = `<input type="text" id="ytPhaseInput" placeholder="YouTube URL (bijv. https://www.youtube.com/watch?v=...)" style="width:100%; margin-top:8px;">`;
   } else if (val === 'open_question') {
-    html = `<input type="text" id="openQPhaseInput" placeholder="Stel een vraag aan de deelnemers..." style="width:100%; margin-top:8px;">`;
+    html = `<input type="text" id="openQPhaseInput" placeholder="Stel een open vraag aan de deelnemers..." style="width:100%; margin-top:8px;">`;
   } else if (val === 'quiz') {
     html = `
       <div style="margin-top:8px; display:flex; flex-direction:column; gap:6px;">
@@ -401,7 +559,7 @@ function renderSpecificInputs() {
           <option value="tf">Waar / Niet Waar</option>
           <option value="open">Korte Open Vraag</option>
         </select>
-        <input type="text" id="quizQuestionInput" placeholder="De vraag...">
+        <input type="text" id="quizQuestionInput" placeholder="De quizvraag...">
         <input type="text" id="quizOptionsInput" placeholder="Opties met komma scheiden (alleen bij Multiple Choice)">
         <input type="text" id="quizCorrectInput" placeholder="Het juiste antwoord...">
       </div>`;
@@ -419,11 +577,17 @@ function renderSpecificInputs() {
 phaseSelect.onchange = renderSpecificInputs;
 renderSpecificInputs();
 
-// Fase toevoegen
 $('#btnAddPhase').onclick = async () => {
+  if (!selectedLessonId) return alert("Selecteer of maak eerst een les aan!");
+
   const type = phaseSelect.value;
-  const title = $('#phaseTitleInput').value.trim() || 'Fase';
-  let data = { type, title };
+  const title = $('#phaseTitleInput').value.trim() || 'Onderdeel';
+  let data = { 
+    type, 
+    title,
+    order: cachedSortedPhases.length,
+    created: Date.now()
+  };
 
   if (type === 'text') {
     data.content = $('#textPhaseInput').value;
@@ -449,48 +613,182 @@ $('#btnAddPhase').onclick = async () => {
     }
   }
 
-  push(ref(db, 'lesson/phases'), data);
+  await push(ref(db, `lessons/${selectedLessonId}/phases`), data);
   $('#phaseTitleInput').value = '';
   renderSpecificInputs();
+  showToast("Onderdeel toegevoegd ✓");
 };
 
-// Realtime Synchronisatie
-function initRealtime() {
-  // Lesnaam
-  onValue(ref(db, 'lesson/title'), snap => {
-    const t = snap.val() || 'Hebreeën 11';
-    $('#displayLessonName').textContent = '📖 Les: ' + t;
+// Verschuiven van fases in de huidige les
+window.movePhase = async (phaseId, direction) => {
+  const currentLesson = getCurrentLessonId();
+  if (!currentLesson) return;
+
+  const idx = cachedSortedPhases.findIndex(p => p.id === phaseId);
+  if (idx === -1) return;
+  const targetIdx = idx + direction;
+  if (targetIdx < 0 || targetIdx >= cachedSortedPhases.length) return;
+
+  const list = [...cachedSortedPhases];
+  const temp = list[idx];
+  list[idx] = list[targetIdx];
+  list[targetIdx] = temp;
+
+  const updates = {};
+  list.forEach((item, i) => {
+    updates[`lessons/${currentLesson}/phases/${item.id}/order`] = i;
+  });
+  await update(ref(db), updates);
+};
+
+window.removePhase = (phaseId) => {
+  const currentLesson = getCurrentLessonId();
+  if (confirm("Dit lesonderdeel definitief verwijderen?")) {
+    remove(ref(db, `lessons/${currentLesson}/phases/${phaseId}`));
+  }
+};
+
+function getCurrentLessonId() {
+  return currentUser.role === 'inleider' ? selectedLessonId : activePushedLessonId;
+}
+
+// =====================================================
+// REALTIME SYNC ENGINE
+// =====================================================
+
+function initAppSync() {
+  // 1. Luister naar welke les GEPUSHT is naar deelnemers
+  onValue(ref(db, 'session/activeLessonId'), snap => {
+    activePushedLessonId = snap.val();
+    updateAppView();
   });
 
-  // Fases renderen
-  onValue(ref(db, 'lesson/phases'), snap => {
-    const phases = snap.val() || {};
-    const container = $('#phasesContainer');
-    container.innerHTML = '';
+  // 2. Luister naar alle ontworpen lessen
+  onValue(ref(db, 'lessons'), snap => {
+    allLessons = snap.val() || {};
+    
+    // Als er nog geen les bestaat en we zijn inleider, maak standaard les 1
+    if (Object.keys(allLessons).length === 0 && currentUser.role === 'inleider') {
+      const initRef = push(ref(db, 'lessons'));
+      set(initRef, {
+        title: "Hebreeën 11 - Het geloof",
+        created: Date.now()
+      });
+      selectedLessonId = initRef.key;
+      return;
+    }
 
-    Object.entries(phases).forEach(([id, phase], index) => {
-      const card = document.createElement('div');
-      card.className = 'phase-card';
-      card.innerHTML = `
-        <div class="phase-header">
-          <span class="phase-title">Fase ${index + 1}: ${escapeHtml(phase.title)}</span>
-          ${currentUser.role === 'inleider' ? `<button class="btn-danger" style="padding:4px 8px; font-size:11px;" onclick="window.removePhase('${id}')">Verwijderen</button>` : ''}
-        </div>
-        <div class="phase-body" id="phase_body_${id}"></div>
-      `;
-      container.appendChild(card);
-      renderPhaseContent(id, phase);
-    });
+    if (!selectedLessonId || !allLessons[selectedLessonId]) {
+      selectedLessonId = activePushedLessonId || Object.keys(allLessons)[0];
+    }
+
+    updateLessonSelectorDropdown();
+    updateAppView();
   });
 }
 
-window.removePhase = (id) => {
-  if (confirm("Deze fase verwijderen?")) remove(ref(db, `lesson/phases/${id}`));
-};
+function updateLessonSelectorDropdown() {
+  const sel = $('#lessonSelector');
+  if (!sel) return;
+  sel.innerHTML = Object.entries(allLessons).map(([id, les]) => `
+    <option value="${id}" ${id === selectedLessonId ? 'selected' : ''}>
+      ${escapeHtml(les.title || 'Naamloze les')} ${id === activePushedLessonId ? '🟢 (LIVE)' : ''}
+    </option>
+  `).join('');
+}
 
-// Render functies voor fases
-function renderPhaseContent(id, phase) {
-  const target = $(`#phase_body_${id}`);
+function updateInleiderView() {
+  const isLive = selectedLessonId && (selectedLessonId === activePushedLessonId);
+  const statusBadge = $('#lessonLiveStatus');
+  const pushBtn = $('#btnPushToParticipants');
+
+  if (isLive) {
+    statusBadge.className = 'status-badge live';
+    statusBadge.textContent = '🟢 LIVE BIJ DEELNEMERS';
+    pushBtn.textContent = '🔄 HER-PUSH DEZE LES';
+  } else {
+    statusBadge.className = 'status-badge draft';
+    statusBadge.textContent = '💤 Niet live (Concept)';
+    pushBtn.textContent = '🚀 PUSH DEZE LES NAAR DEELNEMERS';
+  }
+
+  updateLessonSelectorDropdown();
+  updateAppView();
+}
+
+function updateAppView() {
+  const targetLessonId = getCurrentLessonId();
+  const lessonData = targetLessonId ? allLessons[targetLessonId] : null;
+
+  // Header titel en live indicator
+  if (currentUser.role === 'inleider') {
+    $('#displayLessonName').textContent = '📖 Les: ' + (lessonData?.title || 'Geen les geselecteerd');
+    $('#headerLiveBadge').classList.remove('hidden');
+    if (selectedLessonId === activePushedLessonId && activePushedLessonId) {
+      $('#headerLiveBadge').className = 'status-badge live';
+      $('#headerLiveBadge').textContent = 'LIVE';
+    } else {
+      $('#headerLiveBadge').className = 'status-badge draft';
+      $('#headerLiveBadge').textContent = 'CONCEPT (BEWERKEN)';
+    }
+  } else {
+    // Voor Deelnemers
+    if (!activePushedLessonId || !allLessons[activePushedLessonId]) {
+      $('#displayLessonName').textContent = '📖 Les: Wachten op start...';
+      $('#phasesContainer').innerHTML = '';
+      $('#waitingScreen').classList.remove('hidden');
+      return;
+    } else {
+      $('#waitingScreen').classList.add('hidden');
+      $('#displayLessonName').textContent = '📖 ' + (lessonData?.title || 'Les');
+    }
+  }
+
+  // Fases renderen van de gekozen (of gepushte) les
+  const phases = lessonData?.phases || {};
+  const container = $('#phasesContainer');
+  container.innerHTML = '';
+
+  cachedSortedPhases = Object.entries(phases)
+    .map(([id, p]) => ({ id, ...p }))
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+  if (cachedSortedPhases.length === 0 && currentUser.role === 'deelnemer') {
+    container.innerHTML = `<div style="text-align:center; padding:40px; color:#94a3b8;">Deze les heeft nog geen onderdelen.</div>`;
+    return;
+  }
+
+  cachedSortedPhases.forEach((phase, index) => {
+    const id = phase.id;
+    const card = document.createElement('div');
+    card.className = 'phase-card';
+    card.innerHTML = `
+      <div class="phase-header">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span class="phase-badge">${index + 1}</span>
+          <span class="phase-title">${escapeHtml(phase.title)}</span>
+        </div>
+        ${currentUser.role === 'inleider' ? `
+          <div style="display:flex; gap:6px; align-items:center;">
+            <button class="btn-reorder" onclick="window.movePhase('${id}', -1)" ${index === 0 ? 'disabled' : ''} title="Verplaats naar boven">⬆ Omhoog</button>
+            <button class="btn-reorder" onclick="window.movePhase('${id}', 1)" ${index === cachedSortedPhases.length - 1 ? 'disabled' : ''} title="Verplaats naar beneden">⬇ Omlaag</button>
+            <button class="btn-danger" style="padding:5px 8px; font-size:12px;" onclick="window.removePhase('${id}')">✕</button>
+          </div>
+        ` : ''}
+      </div>
+      <div class="phase-body" id="phase_body_${id}"></div>
+    `;
+    container.appendChild(card);
+    renderPhaseContent(targetLessonId, id, phase);
+  });
+}
+
+// =====================================================
+// RENDER CONTENT TYPES
+// =====================================================
+
+function renderPhaseContent(lessonId, phaseId, phase) {
+  const target = $(`#phase_body_${phaseId}`);
   if (!target) return;
 
   switch(phase.type) {
@@ -520,51 +818,51 @@ function renderPhaseContent(id, phase) {
       target.innerHTML = `
         <div style="font-size:17px; font-weight:600; margin-bottom:12px;">${escapeHtml(phase.question)}</div>
         <div style="display:flex; gap:8px;">
-          <input type="text" id="input_q_${id}" placeholder="Geef jouw reactie als ${escapeHtml(currentUser.name)}..." style="flex:1;">
-          <button onclick="window.postComment('${id}')">Verzenden</button>
+          <input type="text" id="input_q_${phaseId}" placeholder="Plaats jouw reactie als ${escapeHtml(currentUser.name)}..." style="flex:1;">
+          <button onclick="window.postComment('${lessonId}', '${phaseId}')">Verzenden</button>
         </div>
-        <div class="comments-list" id="feed_${id}"></div>
+        <div class="comments-list" id="feed_${phaseId}"></div>
       `;
-      syncComments(id);
+      syncComments(lessonId, phaseId);
       break;
 
     case 'quiz':
       target.innerHTML = `
         <div style="font-size:17px; font-weight:600; margin-bottom:8px;">${escapeHtml(phase.question)}</div>
-        <div id="quiz_ui_${id}"></div>
-        <div id="quiz_feedback_${id}" style="margin-top:10px; font-weight:bold;"></div>
+        <div id="quiz_ui_${phaseId}"></div>
+        <div id="quiz_feedback_${phaseId}" style="margin-top:10px; font-weight:bold;"></div>
         <div style="margin-top:16px; border-top:1px solid var(--border); padding-top:10px;">
           <span style="font-size:12px; color:var(--text-muted);">Scores van deelnemers:</span>
-          <div id="quiz_leaderboard_${id}" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:6px;"></div>
+          <div id="quiz_leaderboard_${phaseId}" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:6px;"></div>
         </div>
       `;
-      setupQuiz(id, phase);
+      setupQuiz(lessonId, phaseId, phase);
       break;
 
     case 'digibord':
       target.innerHTML = `
-        <div class="whiteboard-container" id="wb_wrap_${id}">
+        <div class="whiteboard-container" id="wb_wrap_${phaseId}">
           <div class="wb-toolbar">
-            <input type="color" id="wbColor_${id}" value="#ffffff">
-            <button class="btn-secondary" style="padding:4px 8px;" onclick="window.clearCanvas('${id}')">Wis Tekening</button>
-            <input type="text" id="wbNoteInput_${id}" placeholder="Typ briefje..." style="width:130px; padding:4px 8px;">
-            <button style="padding:4px 8px;" onclick="window.addStickyNote('${id}')">+ Briefje</button>
+            <input type="color" id="wbColor_${phaseId}" value="#ffffff">
+            <button class="btn-secondary" style="padding:4px 8px;" onclick="window.clearCanvas('${lessonId}', '${phaseId}')">Wis Tekening</button>
+            <input type="text" id="wbNoteInput_${phaseId}" placeholder="Typ briefje..." style="width:130px; padding:4px 8px;">
+            <button style="padding:4px 8px;" onclick="window.addStickyNote('${lessonId}', '${phaseId}')">+ Briefje</button>
           </div>
-          <canvas id="wbCanvas_${id}"></canvas>
-          <div id="stickies_${id}"></div>
+          <canvas class="wb-canvas" id="wbCanvas_${phaseId}"></canvas>
+          <div id="stickies_${phaseId}"></div>
         </div>
       `;
-      setupWhiteboard(id);
+      setupWhiteboard(lessonId, phaseId);
       break;
   }
 }
 
 // Open Vragen Livefeed
-window.postComment = (phaseId) => {
+window.postComment = (lessonId, phaseId) => {
   const inp = $(`#input_q_${phaseId}`);
   const text = inp.value.trim();
   if (!text) return;
-  push(ref(db, `lesson/interactions/${phaseId}/comments`), {
+  push(ref(db, `lesson_interactions/${lessonId}/${phaseId}/comments`), {
     name: currentUser.name,
     text: text,
     time: Date.now()
@@ -572,8 +870,8 @@ window.postComment = (phaseId) => {
   inp.value = '';
 };
 
-function syncComments(phaseId) {
-  onValue(ref(db, `lesson/interactions/${phaseId}/comments`), snap => {
+function syncComments(lessonId, phaseId) {
+  onValue(ref(db, `lesson_interactions/${lessonId}/${phaseId}/comments`), snap => {
     const list = snap.val() || {};
     const feed = $(`#feed_${phaseId}`);
     if (!feed) return;
@@ -586,28 +884,27 @@ function syncComments(phaseId) {
   });
 }
 
-// Quiz Functionaliteit
-function setupQuiz(phaseId, phase) {
+// Quiz
+function setupQuiz(lessonId, phaseId, phase) {
   const ui = $(`#quiz_ui_${phaseId}`);
   if (phase.quizType === 'mc') {
     ui.innerHTML = (phase.options || []).map(opt => `
-      <button class="quiz-option" onclick="window.submitQuizAnswer('${phaseId}', '${escapeHtml(opt)}', '${escapeHtml(phase.correct)}')">${escapeHtml(opt)}</button>
+      <button class="quiz-option" onclick="window.submitQuizAnswer('${lessonId}', '${phaseId}', '${escapeHtml(opt)}', '${escapeHtml(phase.correct)}')">${escapeHtml(opt)}</button>
     `).join('');
   } else if (phase.quizType === 'tf') {
     ui.innerHTML = `
-      <button class="quiz-option" onclick="window.submitQuizAnswer('${phaseId}', 'Waar', '${escapeHtml(phase.correct)}')">Waar</button>
-      <button class="quiz-option" onclick="window.submitQuizAnswer('${phaseId}', 'Niet Waar', '${escapeHtml(phase.correct)}')">Niet Waar</button>
+      <button class="quiz-option" onclick="window.submitQuizAnswer('${lessonId}', '${phaseId}', 'Waar', '${escapeHtml(phase.correct)}')">Waar</button>
+      <button class="quiz-option" onclick="window.submitQuizAnswer('${lessonId}', '${phaseId}', 'Niet Waar', '${escapeHtml(phase.correct)}')">Niet Waar</button>
     `;
   } else {
     ui.innerHTML = `
       <div style="display:flex; gap:8px;">
-        <input type="text" id="openQuizInp_${phaseId}" placeholder="Antwoord...">
-        <button onclick="window.submitQuizAnswer('${phaseId}', document.getElementById('openQuizInp_${phaseId}').value, '${escapeHtml(phase.correct)}')">Controleer</button>
+        <input type="text" id="openQuizInp_${phaseId}" placeholder="Typ je antwoord...">
+        <button onclick="window.submitQuizAnswer('${lessonId}', '${phaseId}', document.getElementById('openQuizInp_${phaseId}').value, '${escapeHtml(phase.correct)}')">Controleer</button>
       </div>`;
   }
 
-  // Scores realtime bijwerken
-  onValue(ref(db, `lesson/interactions/${phaseId}/scores`), snap => {
+  onValue(ref(db, `lesson_interactions/${lessonId}/${phaseId}/scores`), snap => {
     const scores = snap.val() || {};
     const board = $(`#quiz_leaderboard_${phaseId}`);
     if (!board) return;
@@ -617,12 +914,12 @@ function setupQuiz(phaseId, phase) {
   });
 }
 
-window.submitQuizAnswer = (phaseId, given, correct) => {
+window.submitQuizAnswer = (lessonId, phaseId, given, correct) => {
   const feedback = $(`#quiz_feedback_${phaseId}`);
   const isCorrect = given.trim().toLowerCase() === correct.trim().toLowerCase();
   if (isCorrect) {
     feedback.innerHTML = `<span style="color:#22c55e;">Goed beantwoord! (+1 punt)</span>`;
-    set(ref(db, `lesson/interactions/${phaseId}/scores/${currentUser.id}`), {
+    set(ref(db, `lesson_interactions/${lessonId}/${phaseId}/scores/${currentUser.id}`), {
       name: currentUser.name,
       points: 1
     });
@@ -631,8 +928,8 @@ window.submitQuizAnswer = (phaseId, given, correct) => {
   }
 };
 
-// Digibord / Realtime Whiteboard
-function setupWhiteboard(phaseId) {
+// Digibord
+function setupWhiteboard(lessonId, phaseId) {
   const canvas = $(`#wbCanvas_${phaseId}`);
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
@@ -644,7 +941,6 @@ function setupWhiteboard(phaseId) {
   let drawing = false;
   let lastX = 0, lastY = 0;
 
-  // Pen-down / Pen-up correct gelopen
   canvas.addEventListener('pointerdown', e => {
     drawing = true;
     const rect = canvas.getBoundingClientRect();
@@ -659,7 +955,7 @@ function setupWhiteboard(phaseId) {
     const y = e.clientY - rect.top;
     const color = $(`#wbColor_${phaseId}`).value;
 
-    push(ref(db, `lesson/whiteboard/${phaseId}/strokes`), {
+    push(ref(db, `lesson_whiteboard/${lessonId}/${phaseId}/strokes`), {
       x0: lastX / canvas.width,
       y0: lastY / canvas.height,
       x1: x / canvas.width,
@@ -675,8 +971,7 @@ function setupWhiteboard(phaseId) {
   canvas.addEventListener('pointerup', stopDrawing);
   canvas.addEventListener('pointercancel', stopDrawing);
 
-  // Sync Tekeningen
-  onValue(ref(db, `lesson/whiteboard/${phaseId}/strokes`), snap => {
+  onValue(ref(db, `lesson_whiteboard/${lessonId}/${phaseId}/strokes`), snap => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const strokes = snap.val() || {};
     Object.values(strokes).forEach(s => {
@@ -690,8 +985,7 @@ function setupWhiteboard(phaseId) {
     });
   });
 
-  // Sync Draggable Briefjes
-  onValue(ref(db, `lesson/whiteboard/${phaseId}/stickies`), snap => {
+  onValue(ref(db, `lesson_whiteboard/${lessonId}/${phaseId}/stickies`), snap => {
     const list = snap.val() || {};
     const div = $(`#stickies_${phaseId}`);
     if (!div) return;
@@ -704,17 +998,17 @@ function setupWhiteboard(phaseId) {
       el.style.background = note.color || '#fef08a';
       el.innerHTML = `<div>${escapeHtml(note.text)}</div><div class="sticky-author">${escapeHtml(note.author)}</div>`;
       
-      makeDraggable(el, sId, phaseId, wrap);
+      makeDraggable(el, sId, lessonId, phaseId, wrap);
       div.appendChild(el);
     });
   });
 }
 
-window.addStickyNote = (phaseId) => {
+window.addStickyNote = (lessonId, phaseId) => {
   const inp = $(`#wbNoteInput_${phaseId}`);
   const text = inp.value.trim();
   if (!text) return;
-  push(ref(db, `lesson/whiteboard/${phaseId}/stickies`), {
+  push(ref(db, `lesson_whiteboard/${lessonId}/${phaseId}/stickies`), {
     text: text,
     author: currentUser.name,
     x: 0.2 + Math.random() * 0.5,
@@ -724,11 +1018,11 @@ window.addStickyNote = (phaseId) => {
   inp.value = '';
 };
 
-window.clearCanvas = (phaseId) => {
-  remove(ref(db, `lesson/whiteboard/${phaseId}/strokes`));
+window.clearCanvas = (lessonId, phaseId) => {
+  remove(ref(db, `lesson_whiteboard/${lessonId}/${phaseId}/strokes`));
 };
 
-function makeDraggable(el, noteId, phaseId, container) {
+function makeDraggable(el, noteId, lessonId, phaseId, container) {
   let isDrag = false;
   let offset = [0, 0];
 
@@ -749,7 +1043,7 @@ function makeDraggable(el, noteId, phaseId, container) {
   const endDrag = () => {
     if (!isDrag) return;
     isDrag = false;
-    update(ref(db, `lesson/whiteboard/${phaseId}/stickies/${noteId}`), {
+    update(ref(db, `lesson_whiteboard/${lessonId}/${phaseId}/stickies/${noteId}`), {
       x: el.offsetLeft / container.clientWidth,
       y: el.offsetTop / container.clientHeight
     });

@@ -351,10 +351,14 @@
         </div>
       </div>
 
-      <div style="display:flex; align-items:center; gap:12px;">
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
         <div id="lessonLiveStatus" class="status-badge draft">💤 Niet live</div>
         <button id="btnPushToParticipants" class="btn-push">
           🚀 PUSH DEZE INLEIDING NAAR DEELNEMERS
+        </button>
+        <!-- Knop om de inleiding te unpushen -->
+        <button id="btnUnpushLesson" class="btn-secondary" style="background:#475569; font-weight:700; padding:10px 14px;" title="Haal de inleiding van het scherm van deelnemers">
+          ⏹️ Unpush inleiding
         </button>
       </div>
     </div>
@@ -499,7 +503,7 @@ $('#btnResetParticipants').onclick = async () => {
 };
 
 // =====================================================
-// BEHEER INLEIDINGEN & PUSH FUNCTIE
+// BEHEER INLEIDINGEN & PUSH / UNPUSH FUNCTIE
 // =====================================================
 
 // Nieuwe inleiding aanmaken
@@ -543,6 +547,17 @@ $('#btnPushToParticipants').onclick = async () => {
   await set(ref(db, 'session/activeLessonId'), selectedLessonId);
   const title = allLessons[selectedLessonId]?.title || 'inleiding';
   showToast(`🚀 "${title}" is nu live gepusht naar alle deelnemers!`);
+  updateInleiderView();
+};
+
+// DE UNPUSH KNOP: Haalt de actieve inleiding weg bij de deelnemers
+$('#btnUnpushLesson').onclick = async () => {
+  if (!activePushedLessonId) {
+    showToast("Er staat momenteel geen inleiding live.");
+    return;
+  }
+  await remove(ref(db, 'session/activeLessonId'));
+  showToast("⏹️ Inleiding is unpushed (deelnemers zien weer het wachtscherm) ✓");
   updateInleiderView();
 };
 
@@ -676,6 +691,9 @@ function initAppSync() {
   onValue(ref(db, 'session/activeLessonId'), snap => {
     activePushedLessonId = snap.val();
     updateAppView();
+    if (currentUser.role === 'inleider') {
+      updateInleiderView();
+    }
   });
 
   // 2. Luister naar alle ontworpen lessen
@@ -716,15 +734,26 @@ function updateInleiderView() {
   const isLive = selectedLessonId && (selectedLessonId === activePushedLessonId);
   const statusBadge = $('#lessonLiveStatus');
   const pushBtn = $('#btnPushToParticipants');
+  const unpushBtn = $('#btnUnpushLesson');
 
   if (isLive) {
     statusBadge.className = 'status-badge live';
     statusBadge.textContent = '🟢 LIVE BIJ DEELNEMERS';
-    pushBtn.textContent = '🔄 HER-PUSH DEZE LES';
+    pushBtn.textContent = '🔄 HER-PUSH DEZE INLEIDING';
   } else {
     statusBadge.className = 'status-badge draft';
     statusBadge.textContent = '💤 Niet live (Concept)';
-    pushBtn.textContent = '🚀 PUSH DEZE LES NAAR DEELNEMERS';
+    pushBtn.textContent = '🚀 PUSH DEZE INLEIDING NAAR DEELNEMERS';
+  }
+
+  if (unpushBtn) {
+    if (activePushedLessonId) {
+      unpushBtn.style.opacity = '1';
+      unpushBtn.style.cursor = 'pointer';
+    } else {
+      unpushBtn.style.opacity = '0.5';
+      unpushBtn.style.cursor = 'not-allowed';
+    }
   }
 
   updateLessonSelectorDropdown();
@@ -749,17 +778,17 @@ function updateAppView() {
   } else {
     // Voor Deelnemers
     if (!activePushedLessonId || !allLessons[activePushedLessonId]) {
-      $('#displayLessonName').textContent = '📖 Les: Wachten op start...';
+      $('#displayLessonName').textContent = '📖 inleiding: Wachten op start...';
       $('#phasesContainer').innerHTML = '';
       $('#waitingScreen').classList.remove('hidden');
       return;
     } else {
       $('#waitingScreen').classList.add('hidden');
-      $('#displayLessonName').textContent = '📖 ' + (lessonData?.title || 'Les');
+      $('#displayLessonName').textContent = '📖 ' + (lessonData?.title || 'inleiding');
     }
   }
 
-  // Fases renderen van de gekozen (of gepushte) les
+  // Fases renderen van de gekozen (of gepushte) inleiding
   const phases = lessonData?.phases || {};
   const container = $('#phasesContainer');
   container.innerHTML = '';

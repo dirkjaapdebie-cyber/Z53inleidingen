@@ -504,7 +504,7 @@ $('#btnResetParticipants').onclick = async () => {
 
 // Nieuwe les aanmaken
 $('#btnNewLessonModal').onclick = async () => {
-  const title = prompt("Voer de naam in van de nieuwe les:", "Bijv: Hebreeën 11 - Geloofsgetuigen");
+  const title = prompt("Voer de naam in van de nieuwe les:", "..naam nieuwe inleiding");
   if (!title || !title.trim()) return;
 
   const newRef = push(ref(db, 'lessons'));

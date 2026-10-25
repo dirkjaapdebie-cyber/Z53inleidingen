@@ -287,6 +287,69 @@
   .sticky-note:active { cursor: grabbing; z-index: 50; }
   .sticky-author { font-size: 11px; font-weight: bold; text-align: right; margin-top: 6px; }
 
+  /* 25 ACTIVERENDE WERKVOORBEELDEN STIJLEN */
+  .werkvorm-prompt {
+    font-size: 15px; color: #cbd5e1; margin-bottom: 12px; line-height: 1.5;
+  }
+  .geeltjes-wall-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px; margin-top: 14px;
+  }
+  .geeltje-card {
+    padding: 12px; border-radius: 2px 2px 8px 2px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    color: #0f172a; font-family: 'Patrick Hand', cursive; font-size: 16px; min-height: 95px;
+    display: flex; flex-direction: column; justify-content: space-between; word-break: break-word;
+  }
+  .geeltje-card.yellow { background: #fef08a; border-top: 5px solid #facc15; }
+  .geeltje-card.pink   { background: #fbcfe8; border-top: 5px solid #f472b6; }
+  .geeltje-card.blue   { background: #bae6fd; border-top: 5px solid #38bdf8; }
+  .geeltje-card.green  { background: #bbf7d0; border-top: 5px solid #4ade80; }
+  .geeltje-card.koffer { background: #dbeafe; border-top: 5px solid #60a5fa; }
+  .geeltje-card.trash  { background: #fee2e2; border-top: 5px solid #f87171; text-decoration: line-through; }
+  .geeltje-card .author { font-size: 12px; font-family: 'Inter', sans-serif; font-weight: 700; color: #334155; text-align: right; margin-top: 6px; }
+
+  /* Placemat */
+  .placemat-box {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;
+  }
+  .placemat-corner-cell {
+    background: rgba(15, 23, 42, 0.7); border: 1px dashed var(--border); border-radius: 8px;
+    padding: 10px; min-height: 70px; font-size: 13px;
+  }
+  .placemat-center-cell {
+    grid-column: 1 / span 2; background: rgba(99, 102, 241, 0.15); border: 2px solid var(--accent);
+    border-radius: 8px; padding: 12px; font-weight: 600; font-size: 14px;
+  }
+
+  /* Over de streep */
+  .spectrum-slider-bar {
+    display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px;
+  }
+  .spectrum-range-input { width: 100%; cursor: pointer; }
+
+  /* Tekencanvas */
+  .custom-drawing-canvas {
+    width: 100%; height: 220px; background: #020617; border: 2px dashed #475569;
+    border-radius: 10px; touch-action: none; cursor: crosshair; display: block;
+  }
+  .color-dot-pick {
+    width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 2px solid #fff;
+  }
+  .color-dot-pick.active { transform: scale(1.2); border-color: var(--accent); }
+  .drawing-gallery-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px; margin-top: 12px; max-height: 260px; overflow-y: auto;
+  }
+  .drawing-gallery-card {
+    background: #020617; border: 1px solid var(--border); border-radius: 8px; padding: 6px;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .drawing-gallery-card img { width: 100%; height: 100px; object-fit: contain; background: #0f172a; border-radius: 4px; }
+  .feed-tag-badge {
+    display: inline-block; padding: 2px 7px; border-radius: 6px; font-size: 11px; font-weight: 700;
+    background: #312e81; color: #c7d2fe; margin-right: 6px;
+  }
+
   /* Bottom Bar */
   .inleider-bar {
     position: fixed; bottom: 0; left: 0; right: 0;
@@ -386,13 +449,42 @@
     <h2>🛠️ Onderdeel toevoegen aan deze inleiding:</h2>
     <div class="form-row">
       <select id="phaseTypeSelect">
-        <option value="text">📝 Tekstblok met opmaak</option>
-        <option value="youtube">🎥 YouTube Video</option>
-        <option value="open_question">💬 Open Vraag & Livefeed</option>
-        <option value="quiz">❓ Interactieve Quiz</option>
-        <option value="website">🌐 Externe Website (iFrame)</option>
-        <option value="digibord">🖊️ Digibord & Briefjes</option>
-        <option value="image">🖼️ Afbeelding toevoegen</option>
+        <optgroup label="Basis Onderdelen">
+          <option value="text">📝 Tekstblok met opmaak</option>
+          <option value="youtube">🎥 YouTube Video</option>
+          <option value="open_question">💬 Open Vraag & Livefeed</option>
+          <option value="quiz">❓ Interactieve Quiz</option>
+          <option value="website">🌐 Externe Website (iFrame)</option>
+          <option value="digibord">🖊️ Digibord & Briefjes</option>
+          <option value="image">🖼️ Afbeelding toevoegen</option>
+        </optgroup>
+        <optgroup label="25 Activerende Werkvormen">
+          <option value="zweedse_methode">1. 💡❓🏹 Zweedse Methode</option>
+          <option value="stille_conversatie">2. 🤫 Stille Conversatie (Muur van Stilte)</option>
+          <option value="sleutelwoord">3. 🔑 Sleutelwoord & Toelichting</option>
+          <option value="krantenkop">4. 📰 Krantenkop / Tweet Samenvatting</option>
+          <option value="parafraseren">5. 🔄 Parafraseren in 2026</option>
+          <option value="tijdlijn_curve">6. 📈 Tijdlijn & Emotiecurve (Tekenen)</option>
+          <option value="placemat">7. 📋 Placemat Methode (4 Hoeken + Midden)</option>
+          <option value="over_de_streep">8. ⚖️ Over de Streep (Spectrum Slider)</option>
+          <option value="fishbowl">9. 🐟 Fishbowl / Binnen- & Buitencirkel</option>
+          <option value="walk_and_talk">10. 🚶 Walk & Talk (Wandelvragen)</option>
+          <option value="speeddaten">11. ⏱️ Speeddaten (Korte Uitwisseling)</option>
+          <option value="diamant_prioriteren">12. 💎 Diamant Prioriteren (Top Keuze)</option>
+          <option value="hot_seat">13. 🪑 Hot Seat (Personage Interview)</option>
+          <option value="fototafel">14. 📸 Fototafel / Foto-associatie</option>
+          <option value="kritische_bril">15. 🧐 Kritische Bril (Sceptisch vs Geloof)</option>
+          <option value="voorwerpenles">16. 🧰 Voorwerpenles (Kies & Koppel)</option>
+          <option value="teken_de_kern">17. 🎨 Teken de Kern (Digitaal Tekencanvas)</option>
+          <option value="koffer_prullenbak">18. 🧳🗑️ Koffer & Prullenbak</option>
+          <option value="brief_schrijven">19. ✉️ Brief aan Jezelf of God</option>
+          <option value="smart_actiekaart">20. 🎯 SMART Actiekaart (Doel voor deze week)</option>
+          <option value="waarom_ketting">21. ⛓️ De 5x Waarom-ketting</option>
+          <option value="postit_actiemuur">22. 📌 Post-it Actiemuur (Uitdaging vs Kans)</option>
+          <option value="gebedscarrousel">23. 🙏 Gebedscarrousel (Dank, Vergeving, Vraag)</option>
+          <option value="lectio_divina">24. 📖 Lectio Divina (3 Luisterrondes)</option>
+          <option value="zegen_doorgeven">25. 🕊️ Zegen & Bemoediging Doorgeven</option>
+        </optgroup>
       </select>
       <input type="text" id="phaseTitleInput" placeholder="Titel of kop van dit onderdeel...">
       <button id="btnAddPhase">+ Onderdeel Toevoegen</button>
@@ -455,6 +547,7 @@ let allLessons = {};
 let selectedLessonId = null;   // De inleiding die de inleider bekijkt/bewerkt
 let activePushedLessonId = null; // De inleiding die live staat voor deelnemers
 let cachedSortedPhases = [];
+const canvasStateMap = {};
 
 const $ = s => document.querySelector(s);
 
@@ -618,6 +711,20 @@ function renderSpecificInputs() {
         <input type="text" id="imgUrlInput" placeholder="Afbeelding URL (https://...)" style="flex:1;">
         <input type="file" id="imgFileInput" accept="image/*">
       </div>`;
+  } else {
+    // Voor alle 25 activerende werkvormen
+    html = `
+      <div style="margin-top:8px;">
+        <label style="font-size:12px; color:var(--text-muted);">Instructie, vraag of stelling voor deze werkvorm:</label>
+        <textarea id="werkvormPromptInput" rows="3" style="width:100%; margin-top:4px;" placeholder="Vul hier de toelichting of stelling in..."></textarea>
+      </div>`;
+    if (val === 'over_de_streep') {
+      html += `
+        <div style="display:flex; gap:10px; margin-top:6px;">
+          <input type="text" id="specMinInput" placeholder="Linkerkant (bijv. Helemaal Oneens)" value="Helemaal Oneens" style="flex:1;">
+          <input type="text" id="specMaxInput" placeholder="Rechterkant (bijv. Helemaal Eens)" value="Helemaal Eens" style="flex:1;">
+        </div>`;
+    }
   }
   specificDiv.innerHTML = html;
 }
@@ -628,7 +735,7 @@ $('#btnAddPhase').onclick = async () => {
   if (!selectedLessonId) return alert("Selecteer of maak eerst een inleiding aan!");
 
   const type = phaseSelect.value;
-  const title = $('#phaseTitleInput').value.trim() || 'Onderdeel';
+  const title = $('#phaseTitleInput').value.trim() || phaseSelect.options[phaseSelect.selectedIndex].text;
   let data = { 
     type, 
     title,
@@ -657,6 +764,13 @@ $('#btnAddPhase').onclick = async () => {
       data.img = await toBase64(file);
     } else {
       data.img = $('#imgUrlInput').value;
+    }
+  } else {
+    // Opslag voor de 25 werkvormen
+    data.prompt = $('#werkvormPromptInput')?.value || '';
+    if (type === 'over_de_streep') {
+      data.minLabel = $('#specMinInput')?.value || 'Helemaal Oneens';
+      data.maxLabel = $('#specMaxInput')?.value || 'Helemaal Eens';
     }
   }
 
@@ -845,12 +959,14 @@ function updateAppView() {
 }
 
 // =====================================================
-// RENDER CONTENT TYPES
+// RENDER CONTENT TYPES (INCLUSIEF 25 WERKVOORBEELDEN)
 // =====================================================
 
 function renderPhaseContent(lessonId, phaseId, phase) {
   const target = $(`#phase_body_${phaseId}`);
   if (!target) return;
+
+  const promptText = escapeHtml(phase.prompt || phase.question || '');
 
   switch(phase.type) {
     case 'text':
@@ -916,6 +1032,192 @@ function renderPhaseContent(lessonId, phaseId, phase) {
         </div>
       `;
       setupWhiteboard(lessonId, phaseId);
+      break;
+
+    // --- DE 25 ACTIVERENDE WERKVOORBEELDEN ---
+
+    case 'zweedse_methode':
+      target.innerHTML = `
+        <div class="werkvorm-prompt">${promptText}</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <select id="zw_sym_${phaseId}" style="width:auto;">
+            <option value="💡 Inzicht">💡 Lampje (Nieuw inzicht)</option>
+            <option value="❓ Moeite">❓ Vraagteken (Vraag / Moeite)</option>
+            <option value="🏹 Toepassing">🏹 Pijl (Persoonlijke toepassing)</option>
+          </select>
+          <input type="text" id="zw_in_${phaseId}" placeholder="Jouw reactie bij dit symbool..." style="flex:1;">
+          <button onclick="window.postZweedse('${lessonId}', '${phaseId}')">Delen</button>
+        </div>
+        <div class="comments-list" id="feed_${phaseId}"></div>
+      `;
+      syncGenericFeed(lessonId, phaseId);
+      break;
+
+    case 'stille_conversatie':
+    case 'postit_actiemuur':
+    case 'zegen_doorgeven':
+      target.innerHTML = `
+        <div class="werkvorm-prompt">${promptText}</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <select id="stick_col_${phaseId}" style="width:auto;">
+            <option value="yellow">💛 Geel</option>
+            <option value="pink">🩷 Roze</option>
+            <option value="blue">🩵 Blauw</option>
+            <option value="green">💚 Groen</option>
+          </select>
+          <input type="text" id="stick_in_${phaseId}" placeholder="Schrijf op een briefje..." style="flex:1;">
+          <button onclick="window.postStickyWerkvorm('${lessonId}', '${phaseId}')">Plakken 📌</button>
+        </div>
+        <div class="geeltjes-wall-grid" id="stickies_grid_${phaseId}"></div>
+      `;
+      syncStickyWerkvorm(lessonId, phaseId);
+      break;
+
+    case 'koffer_prullenbak':
+      target.innerHTML = `
+        <div class="werkvorm-prompt">${promptText}</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <select id="kp_sel_${phaseId}" style="width:auto;">
+            <option value="koffer">🧳 Koffer (Meenemen deze week)</option>
+            <option value="trash">🗑️ Prullenbak (Loslaten / Weggooien)</option>
+          </select>
+          <input type="text" id="kp_in_${phaseId}" placeholder="Wat neem je mee of laat je achter?..." style="flex:1;">
+          <button onclick="window.postKofferTrash('${lessonId}', '${phaseId}')">Opslaan</button>
+        </div>
+        <div class="geeltjes-wall-grid" id="stickies_grid_${phaseId}"></div>
+      `;
+      syncStickyWerkvorm(lessonId, phaseId);
+      break;
+
+    case 'placemat':
+      target.innerHTML = `
+        <div class="werkvorm-prompt">${promptText}</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <select id="pm_sel_${phaseId}" style="width:auto;">
+            <option value="Hoek 1">Hoek 1</option>
+            <option value="Hoek 2">Hoek 2</option>
+            <option value="Hoek 3">Hoek 3</option>
+            <option value="Hoek 4">Hoek 4</option>
+            <option value="Midden">🌟 Midden (Gezamenlijke Conclusie)</option>
+          </select>
+          <input type="text" id="pm_in_${phaseId}" placeholder="Jouw inbreng voor dit vak..." style="flex:1;">
+          <button onclick="window.postPlacemat('${lessonId}', '${phaseId}')">Toevoegen</button>
+        </div>
+        <div class="placemat-box">
+          <div class="placemat-corner-cell" id="pm_cell_h1_${phaseId}"><strong>Hoek 1:</strong> ...</div>
+          <div class="placemat-corner-cell" id="pm_cell_h2_${phaseId}"><strong>Hoek 2:</strong> ...</div>
+          <div class="placemat-center-cell" id="pm_cell_mid_${phaseId}"><strong>Gezamenlijke Kern:</strong> ...</div>
+          <div class="placemat-corner-cell" id="pm_cell_h3_${phaseId}"><strong>Hoek 3:</strong> ...</div>
+          <div class="placemat-corner-cell" id="pm_cell_h4_${phaseId}"><strong>Hoek 4:</strong> ...</div>
+        </div>
+      `;
+      syncPlacemat(lessonId, phaseId);
+      break;
+
+    case 'over_de_streep':
+      target.innerHTML = `
+        <div class="werkvorm-prompt">${promptText}</div>
+        <div style="background:rgba(15,23,42,0.6); padding:14px; border-radius:10px; border:1px solid var(--border);">
+          <div class="spectrum-slider-bar">
+            <span>${escapeHtml(phase.minLabel || 'Helemaal Oneens')}</span>
+            <span id="spec_val_lbl_${phaseId}" style="color:#818cf8;">Stand: 5</span>
+            <span>${escapeHtml(phase.maxLabel || 'Helemaal Eens')}</span>
+          </div>
+          <input type="range" min="1" max="10" value="5" class="spectrum-range-input" id="spec_rng_${phaseId}" 
+            oninput="document.getElementById('spec_val_lbl_${phaseId}').textContent = 'Stand: ' + this.value">
+          <button style="margin-top:10px; width:100%;" onclick="window.postSpectrum('${lessonId}', '${phaseId}')">Stem Vastleggen</button>
+          <div id="spec_feed_${phaseId}" class="comments-list" style="margin-top:10px;"></div>
+        </div>
+      `;
+      syncSpectrum(lessonId, phaseId);
+      break;
+
+    case 'tijdlijn_curve':
+    case 'teken_de_kern':
+      target.innerHTML = `
+        <div class="werkvorm-prompt">${promptText}</div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <canvas class="custom-drawing-canvas" id="draw_canvas_${phaseId}"></canvas>
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <span style="font-size:12px; color:var(--text-muted);">Kleur:</span>
+            <div class="color-dot-pick active" style="background:#ffffff;" onclick="window.setDrawingColor('${phaseId}', '#ffffff', this)"></div>
+            <div class="color-dot-pick" style="background:#ef4444;" onclick="window.setDrawingColor('${phaseId}', '#ef4444', this)"></div>
+            <div class="color-dot-pick" style="background:#38bdf8;" onclick="window.setDrawingColor('${phaseId}', '#38bdf8', this)"></div>
+            <div class="color-dot-pick" style="background:#4ade80;" onclick="window.setDrawingColor('${phaseId}', '#4ade80', this)"></div>
+            <div class="color-dot-pick" style="background:#fde047;" onclick="window.setDrawingColor('${phaseId}', '#fde047', this)"></div>
+            <button class="btn-secondary" style="margin-left:auto; padding:6px 12px;" onclick="window.clearDrawingWerkvorm('${phaseId}')">Wissen</button>
+            <button onclick="window.saveDrawingWerkvorm('${lessonId}', '${phaseId}')">Deel Tekening 🚀</button>
+          </div>
+          <div class="drawing-gallery-grid" id="draw_gallery_${phaseId}"></div>
+        </div>
+      `;
+      setupDrawingCanvas(lessonId, phaseId);
+      break;
+
+    case 'voorwerpenles':
+      target.innerHTML = `
+        <div class="werkvorm-prompt">${promptText}</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <select id="vw_sel_${phaseId}" style="width:auto;">
+            <option value="🕯️ Kaars / Licht">🕯️ Kaars / Licht</option>
+            <option value="🧂 Zout">🧂 Zout</option>
+            <option value="🪞 Spiegel">🪞 Spiegel</option>
+            <option value="🌱 Zaadje">🌱 Zaadje</option>
+            <option value="🔑 Sleutel">🔑 Sleutel</option>
+            <option value="⛓️ Ketting">⛓️ Ketting</option>
+            <option value="🩹 Pleister">🩹 Pleister</option>
+          </select>
+          <input type="text" id="vw_in_${phaseId}" placeholder="Wat symboliseert dit voor jou?..." style="flex:1;">
+          <button onclick="window.postVoorwerp('${lessonId}', '${phaseId}')">Delen</button>
+        </div>
+        <div class="comments-list" id="feed_${phaseId}"></div>
+      `;
+      syncGenericFeed(lessonId, phaseId);
+      break;
+
+    case 'smart_actiekaart':
+      target.innerHTML = `
+        <div class="werkvorm-prompt">${promptText}</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <input type="text" id="smart_wat_${phaseId}" placeholder="WAT ga je concreet doen?..." style="flex:2;">
+          <input type="text" id="smart_wanneer_${phaseId}" placeholder="WANNEER / MET WIE?..." style="flex:1;">
+          <button onclick="window.postSmart('${lessonId}', '${phaseId}')">Vastleggen 🎯</button>
+        </div>
+        <div class="comments-list" id="feed_${phaseId}"></div>
+      `;
+      syncGenericFeed(lessonId, phaseId);
+      break;
+
+    case 'waarom_ketting':
+      target.innerHTML = `
+        <div class="werkvorm-prompt">${promptText}</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <select id="waarom_sel_${phaseId}" style="width:auto;">
+            <option value="Stap 1: Waarom?">Stap 1: Waarom?</option>
+            <option value="Stap 2: En waarom?">Stap 2: En waarom?</option>
+            <option value="Stap 3: Wat zit daaronder?">Stap 3: Wat zit daaronder?</option>
+            <option value="Stap 4: Welk motief raakt dit?">Stap 4: Welk motief raakt dit?</option>
+            <option value="Stap 5: De diepste kern">Stap 5: De diepste kern</option>
+          </select>
+          <input type="text" id="waarom_in_${phaseId}" placeholder="Jouw antwoord op deze waarom-vraag..." style="flex:1;">
+          <button onclick="window.postWaarom('${lessonId}', '${phaseId}')">Toevoegen ⛓️</button>
+        </div>
+        <div class="comments-list" id="feed_${phaseId}"></div>
+      `;
+      syncGenericFeed(lessonId, phaseId);
+      break;
+
+    default:
+      // Voor alle overige activerende gespreksvormen (krantenkop, parafraseren, speeddaten, walk & talk, hot seat, lectio divina, etc.)
+      target.innerHTML = `
+        <div class="werkvorm-prompt">${promptText}</div>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="gen_in_${phaseId}" placeholder="Jouw inbreng als ${escapeHtml(currentUser.name)}..." style="flex:1;">
+          <button onclick="window.postGenericFeed('${lessonId}', '${phaseId}')">Insturen</button>
+        </div>
+        <div class="comments-list" id="feed_${phaseId}"></div>
+      `;
+      syncGenericFeed(lessonId, phaseId);
       break;
   }
 }
@@ -1029,7 +1331,6 @@ function setupWhiteboard(lessonId, phaseId) {
   let drawing = false;
   let lastX = 0, lastY = 0;
 
-  // Herteken functie bij formaatwijzigingen
   function redrawCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     Object.values(currentStrokes).forEach(s => {
@@ -1060,7 +1361,6 @@ function setupWhiteboard(lessonId, phaseId) {
     });
   }
 
-  // Luister naar formaatwijzigingen (vergroten/verkleinen) van het digibord
   const ro = new ResizeObserver(() => {
     if (canvas.width !== wrap.clientWidth || canvas.height !== wrap.clientHeight) {
       canvas.width = wrap.clientWidth;
@@ -1161,6 +1461,307 @@ function makeDraggable(el, noteId, lessonId, phaseId, container) {
 
   el.addEventListener('pointerup', endDrag);
   el.addEventListener('pointercancel', endDrag);
+}
+
+// =====================================================
+// INTERACTIEVE HANDLERS VOOR DE 25 WERKVOORBEELDEN
+// =====================================================
+
+// Zweedse methode
+window.postZweedse = (lessonId, phaseId) => {
+  const sym = $(`#zw_sym_${phaseId}`).value;
+  const inp = $(`#zw_in_${phaseId}`);
+  const text = inp.value.trim();
+  if (!text) return;
+  push(ref(db, `lesson_interactions/${lessonId}/${phaseId}/feed`), {
+    name: currentUser.name,
+    badge: sym,
+    text: text,
+    time: Date.now()
+  });
+  inp.value = '';
+};
+
+// Geeltjes / Stickies
+window.postStickyWerkvorm = (lessonId, phaseId) => {
+  const inp = $(`#stick_in_${phaseId}`);
+  const col = $(`#stick_col_${phaseId}`)?.value || 'yellow';
+  const text = inp.value.trim();
+  if (!text) return;
+  push(ref(db, `lesson_interactions/${lessonId}/${phaseId}/stickies`), {
+    name: currentUser.name,
+    text: text,
+    color: col,
+    time: Date.now()
+  });
+  inp.value = '';
+};
+
+// Koffer & Prullenbak
+window.postKofferTrash = (lessonId, phaseId) => {
+  const type = $(`#kp_sel_${phaseId}`).value;
+  const inp = $(`#kp_in_${phaseId}`);
+  const text = inp.value.trim();
+  if (!text) return;
+  push(ref(db, `lesson_interactions/${lessonId}/${phaseId}/stickies`), {
+    name: currentUser.name,
+    text: (type === 'koffer' ? '🧳 ' : '🗑️ ') + text,
+    color: type,
+    time: Date.now()
+  });
+  inp.value = '';
+};
+
+function syncStickyWerkvorm(lessonId, phaseId) {
+  onValue(ref(db, `lesson_interactions/${lessonId}/${phaseId}/stickies`), snap => {
+    const list = snap.val() || {};
+    const grid = $(`#stickies_grid_${phaseId}`);
+    if (!grid) return;
+    const entries = Object.values(list);
+    if (!entries.length) {
+      grid.innerHTML = '<em style="color:#64748b; font-size:12px; grid-column:1/-1;">Nog geen briefjes geplakt.</em>';
+      return;
+    }
+    grid.innerHTML = entries.reverse().map(s => `
+      <div class="geeltje-card ${s.color || 'yellow'}">
+        <div>${escapeHtml(s.text)}</div>
+        <div class="author">~ ${escapeHtml(s.name)}</div>
+      </div>
+    `).join('');
+  });
+}
+
+// Placemat
+window.postPlacemat = (lessonId, phaseId) => {
+  const corner = $(`#pm_sel_${phaseId}`).value;
+  const inp = $(`#pm_in_${phaseId}`);
+  const text = inp.value.trim();
+  if (!text) return;
+  set(ref(db, `lesson_interactions/${lessonId}/${phaseId}/placemat/${corner}`), {
+    name: currentUser.name,
+    text: text,
+    time: Date.now()
+  });
+  inp.value = '';
+};
+
+function syncPlacemat(lessonId, phaseId) {
+  onValue(ref(db, `lesson_interactions/${lessonId}/${phaseId}/placemat`), snap => {
+    const d = snap.val() || {};
+    const h1 = $(`#pm_cell_h1_${phaseId}`);
+    const h2 = $(`#pm_cell_h2_${phaseId}`);
+    const h3 = $(`#pm_cell_h3_${phaseId}`);
+    const h4 = $(`#pm_cell_h4_${phaseId}`);
+    const mid = $(`#pm_cell_mid_${phaseId}`);
+    if (h1) h1.innerHTML = `<strong>Hoek 1 (${escapeHtml(d['Hoek 1']?.name || 'Leeg')}):</strong> ${escapeHtml(d['Hoek 1']?.text || '...')}`;
+    if (h2) h2.innerHTML = `<strong>Hoek 2 (${escapeHtml(d['Hoek 2']?.name || 'Leeg')}):</strong> ${escapeHtml(d['Hoek 2']?.text || '...')}`;
+    if (h3) h3.innerHTML = `<strong>Hoek 3 (${escapeHtml(d['Hoek 3']?.name || 'Leeg')}):</strong> ${escapeHtml(d['Hoek 3']?.text || '...')}`;
+    if (h4) h4.innerHTML = `<strong>Hoek 4 (${escapeHtml(d['Hoek 4']?.name || 'Leeg')}):</strong> ${escapeHtml(d['Hoek 4']?.text || '...')}`;
+    if (mid) mid.innerHTML = `<strong>🌟 Gezamenlijke Kern:</strong> ${escapeHtml(d['Midden']?.text || 'Overleg en vul in...')}`;
+  });
+}
+
+// Over de streep (Spectrum)
+window.postSpectrum = (lessonId, phaseId) => {
+  const val = $(`#spec_rng_${phaseId}`).value;
+  set(ref(db, `lesson_interactions/${lessonId}/${phaseId}/spectrum/${currentUser.id}`), {
+    name: currentUser.name,
+    score: parseInt(val),
+    time: Date.now()
+  });
+};
+
+function syncSpectrum(lessonId, phaseId) {
+  onValue(ref(db, `lesson_interactions/${lessonId}/${phaseId}/spectrum`), snap => {
+    const feed = $(`#spec_feed_${phaseId}`);
+    if (!feed) return;
+    const data = snap.val() || {};
+    const entries = Object.values(data);
+    if (!entries.length) {
+      feed.innerHTML = '<em style="color:#64748b; font-size:12px;">Nog geen stemmen op de streep uitgebracht.</em>';
+      return;
+    }
+    const avg = (entries.reduce((a, b) => a + Number(b.score), 0) / entries.length).toFixed(1);
+    let html = `<div style="font-weight:700; color:#818cf8; margin-bottom:6px;">Gemiddelde positie groep: ${avg} / 10 (${entries.length} stemmen)</div>`;
+    html += entries.map(s => `
+      <div class="comment-item" style="padding:6px 10px;">
+        <span><strong>${escapeHtml(s.name)}:</strong> stand ${s.score}</span>
+      </div>
+    `).join('');
+    feed.innerHTML = html;
+  });
+}
+
+// Digitaal Tekencanvas voor Tijdlijn & Teken de kern
+function setupDrawingCanvas(lessonId, phaseId) {
+  const canvas = $(`#draw_canvas_${phaseId}`);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  
+  canvas.width = canvas.clientWidth || 600;
+  canvas.height = 220;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.lineWidth = 3;
+
+  canvasStateMap[phaseId] = {
+    canvas, ctx, color: '#ffffff', isDrawing: false, lastX: 0, lastY: 0
+  };
+
+  const getPos = e => {
+    const rect = canvas.getBoundingClientRect();
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  };
+
+  canvas.addEventListener('pointerdown', e => {
+    const inst = canvasStateMap[phaseId];
+    inst.isDrawing = true;
+    canvas.setPointerCapture(e.pointerId);
+    const p = getPos(e);
+    inst.lastX = p.x; inst.lastY = p.y;
+  });
+
+  canvas.addEventListener('pointermove', e => {
+    const inst = canvasStateMap[phaseId];
+    if (!inst.isDrawing) return;
+    const p = getPos(e);
+    inst.ctx.strokeStyle = inst.color;
+    inst.ctx.beginPath();
+    inst.ctx.moveTo(inst.lastX, inst.lastY);
+    inst.ctx.lineTo(p.x, p.y);
+    inst.ctx.stroke();
+    inst.lastX = p.x; inst.lastY = p.y;
+  });
+
+  const stop = () => {
+    if (canvasStateMap[phaseId]) canvasStateMap[phaseId].isDrawing = false;
+  };
+  canvas.addEventListener('pointerup', stop);
+  canvas.addEventListener('pointercancel', stop);
+
+  // Sync galerij
+  onValue(ref(db, `lesson_interactions/${lessonId}/${phaseId}/drawings`), snap => {
+    const gal = $(`#draw_gallery_${phaseId}`);
+    if (!gal) return;
+    const list = snap.val() || {};
+    const entries = Object.values(list).reverse();
+    if (!entries.length) {
+      gal.innerHTML = '<em style="color:#64748b; font-size:12px; grid-column:1/-1;">Nog geen tekeningen gedeeld.</em>';
+      return;
+    }
+    gal.innerHTML = entries.map(d => `
+      <div class="drawing-gallery-card">
+        <img src="${d.img}">
+        <div style="font-size:11px; color:#94a3b8; text-align:center; margin-top:4px;">${escapeHtml(d.name)}</div>
+      </div>
+    `).join('');
+  });
+}
+
+window.setDrawingColor = (phaseId, hex, btnEl) => {
+  if (canvasStateMap[phaseId]) {
+    canvasStateMap[phaseId].color = hex;
+    btnEl.parentElement.querySelectorAll('.color-dot-pick').forEach(d => d.classList.remove('active'));
+    btnEl.classList.add('active');
+  }
+};
+
+window.clearDrawingWerkvorm = (phaseId) => {
+  const inst = canvasStateMap[phaseId];
+  if (inst) inst.ctx.clearRect(0, 0, inst.canvas.width, inst.canvas.height);
+};
+
+window.saveDrawingWerkvorm = (lessonId, phaseId) => {
+  const inst = canvasStateMap[phaseId];
+  if (!inst) return;
+  const dataUrl = inst.canvas.toDataURL('image/png');
+  push(ref(db, `lesson_interactions/${lessonId}/${phaseId}/drawings`), {
+    name: currentUser.name,
+    img: dataUrl,
+    time: Date.now()
+  });
+  window.clearDrawingWerkvorm(phaseId);
+  showToast("Tekening gedeeld ✓");
+};
+
+// Voorwerpenles
+window.postVoorwerp = (lessonId, phaseId) => {
+  const item = $(`#vw_sel_${phaseId}`).value;
+  const inp = $(`#vw_in_${phaseId}`);
+  const text = inp.value.trim();
+  if (!text) return;
+  push(ref(db, `lesson_interactions/${lessonId}/${phaseId}/feed`), {
+    name: currentUser.name,
+    badge: item,
+    text: text,
+    time: Date.now()
+  });
+  inp.value = '';
+};
+
+// SMART Actiekaart
+window.postSmart = (lessonId, phaseId) => {
+  const wat = $(`#smart_wat_${phaseId}`).value.trim();
+  const wanneer = $(`#smart_wanneer_${phaseId}`).value.trim();
+  if (!wat) return;
+  push(ref(db, `lesson_interactions/${lessonId}/${phaseId}/feed`), {
+    name: currentUser.name,
+    badge: '🎯 Actie',
+    text: `${wat} [Planning: ${wanneer || 'Deze week'}]`,
+    time: Date.now()
+  });
+  $(`#smart_wat_${phaseId}`).value = '';
+  $(`#smart_wanneer_${phaseId}`).value = '';
+};
+
+// Waarom-ketting
+window.postWaarom = (lessonId, phaseId) => {
+  const stap = $(`#waarom_sel_${phaseId}`).value;
+  const inp = $(`#waarom_in_${phaseId}`);
+  const text = inp.value.trim();
+  if (!text) return;
+  push(ref(db, `lesson_interactions/${lessonId}/${phaseId}/feed`), {
+    name: currentUser.name,
+    badge: stap,
+    text: text,
+    time: Date.now()
+  });
+  inp.value = '';
+};
+
+// Generieke Feed voor alle overige activerende vormen
+window.postGenericFeed = (lessonId, phaseId) => {
+  const inp = $(`#gen_in_${phaseId}`);
+  const text = inp.value.trim();
+  if (!text) return;
+  push(ref(db, `lesson_interactions/${lessonId}/${phaseId}/feed`), {
+    name: currentUser.name,
+    text: text,
+    time: Date.now()
+  });
+  inp.value = '';
+};
+
+function syncGenericFeed(lessonId, phaseId) {
+  onValue(ref(db, `lesson_interactions/${lessonId}/${phaseId}/feed`), snap => {
+    const list = snap.val() || {};
+    const feed = $(`#feed_${phaseId}`);
+    if (!feed) return;
+    const entries = Object.values(list);
+    if (!entries.length) {
+      feed.innerHTML = '<em style="color:#64748b; font-size:12px;">Nog geen reacties ingediend.</em>';
+      return;
+    }
+    feed.innerHTML = entries.map(c => `
+      <div class="comment-item">
+        <div class="comment-author">
+          ${c.badge ? `<span class="feed-tag-badge">${escapeHtml(c.badge)}</span>` : ''}
+          ${escapeHtml(c.name)}:
+        </div>
+        <div>${escapeHtml(c.text)}</div>
+      </div>
+    `).join('');
+  });
 }
 
 // Hulpfuncties
